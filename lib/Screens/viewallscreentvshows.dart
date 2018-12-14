@@ -123,9 +123,14 @@ class TvShowTileState extends State<TvShowTile> {
                 fit: BoxFit.cover,
               )*/
             ),
-            child: CachedNetworkImage(
-              imageUrl: "https://image.tmdb.org/t/p/w342" + tvshow.posterPath,
-              fit: BoxFit.cover,
+            child: ClipRRect(
+               borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(5.0),
+                        topRight: Radius.circular(5.0)),
+                          child: CachedNetworkImage(
+                imageUrl: "https://image.tmdb.org/t/p/w342" + tvshow.posterPath,
+                fit: BoxFit.cover,
+              ),
             )),
         Container(
             width: constraints.maxWidth,

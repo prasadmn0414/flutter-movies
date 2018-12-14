@@ -66,10 +66,15 @@ class _MoviesState extends State<Movies> {
                         fit: BoxFit.cover,
                       )*/
                   ),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://image.tmdb.org/t/p/w780/" + movie.backdropPath,
-                     fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(5.0),
+                        topRight: Radius.circular(5.0)),
+                    child: CachedNetworkImage(
+                      imageUrl: "https://image.tmdb.org/t/p/w780/" +
+                          movie.backdropPath,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
                 Padding(
@@ -146,20 +151,25 @@ class _MoviesState extends State<Movies> {
             width: constraints.maxWidth,
             height: constraints.maxHeight * 0.7,
             decoration: BoxDecoration(
-                color: Colors.grey,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(5.0),
-                    topRight: Radius.circular(5.0)),
-                /*image: DecorationImage(
+              color: Colors.grey,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  topRight: Radius.circular(5.0)),
+              /*image: DecorationImage(
                   image: NetworkImage(
                       "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
                   fit: BoxFit.cover,
-                )*/),
-                child: CachedNetworkImage(
-                    imageUrl:
-                        "https://image.tmdb.org/t/p/w342" + movie.posterPath,
-                    fit: BoxFit.cover,
-                  ),
+                )*/
+            ),
+            child: ClipRRect(
+               borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(5.0),
+                        topRight: Radius.circular(5.0)),
+                          child: CachedNetworkImage(
+                imageUrl: "https://image.tmdb.org/t/p/w342" + movie.posterPath,
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           Container(
               width: constraints.maxWidth,

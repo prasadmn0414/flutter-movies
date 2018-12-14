@@ -53,9 +53,9 @@ class _TvShowsState extends State<TvShows> {
               alignment: Alignment.bottomCenter,
               children: <Widget>[
                 Container(
-                  width: width,
-                  height: height * 0.8,
-                  decoration: BoxDecoration(
+                    width: width,
+                    height: height * 0.8,
+                    decoration: BoxDecoration(
                       color: Colors.grey,
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(5.0),
@@ -64,13 +64,18 @@ class _TvShowsState extends State<TvShows> {
                         image: NetworkImage("https://image.tmdb.org/t/p/w780/" +
                             tvshow.backdropPath),
                         fit: BoxFit.cover,
-                      )*/),
+                      )*/
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(5.0),
+                          topRight: Radius.circular(5.0)),
                       child: CachedNetworkImage(
-                    imageUrl:
-                        "https://image.tmdb.org/t/p/w780" + tvshow.backdropPath,
-                    fit: BoxFit.cover,
-                  )
-                ),
+                        imageUrl: "https://image.tmdb.org/t/p/w780" +
+                            tvshow.backdropPath,
+                        fit: BoxFit.cover,
+                      ),
+                    )),
                 Padding(
                   padding: const EdgeInsets.all(4.0),
                   child: Row(
@@ -143,9 +148,9 @@ class _TvShowsState extends State<TvShows> {
         child: Column(
           children: <Widget>[
             Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight * 0.7,
-              decoration: BoxDecoration(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight * 0.7,
+                decoration: BoxDecoration(
                   color: Colors.grey,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(5.0),
@@ -154,13 +159,18 @@ class _TvShowsState extends State<TvShows> {
                     image: NetworkImage(
                         "https://image.tmdb.org/t/p/w342/" + tvshow.posterPath),
                     fit: BoxFit.cover,
-                  )*/),
+                  )*/
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(5.0),
+                      topRight: Radius.circular(5.0)),
                   child: CachedNetworkImage(
                     imageUrl:
                         "https://image.tmdb.org/t/p/w342" + tvshow.posterPath,
                     fit: BoxFit.cover,
-                  )
-            ),
+                  ),
+                )),
             Container(
                 width: constraints.maxWidth,
                 height: constraints.maxHeight * 0.3,
