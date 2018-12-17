@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_app/Constants.dart';
+import 'package:flutter_movie_app/Network/moviedetail.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 
-class MovieDetail extends StatefulWidget {
+class MovieDetailScreen extends StatefulWidget {
+  final int movieid;
+  MovieDetailScreen(this.movieid);
+
   @override
   _MainCollapsingToolbarState createState() => _MainCollapsingToolbarState();
 }
@@ -10,12 +17,16 @@ var kExpandedHeight = 0.0;
 var screenWidth = 0.0;
 var screenHeight = 0.0;
 
-class _MainCollapsingToolbarState extends State<MovieDetail> {
+class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
   ScrollController _scrollController;
+  MovieDetails movieDetails;
+
+  Future<void> _getMovieDetails;
 
   @override
   void initState() {
     _scrollController = ScrollController()..addListener(() => setState(() {}));
+    _getMovieDetails = getMovieDetails();
     super.initState();
   }
 
@@ -33,94 +44,179 @@ class _MainCollapsingToolbarState extends State<MovieDetail> {
         _scrollController.offset > kExpandedHeight - kToolbarHeight;
   }
 
+  Future<void> getMovieDetails() async {
+    int movieid = widget.movieid;
+    String url = 'https://api.themoviedb.org/3/movie/$movieid?api_key=$apikey';
+    final movieDetailResponse = await http.get(url);
+    if (movieDetailResponse.statusCode == 200) {
+      // If the call to the server was successful, parse the JSON
+      var decRes = jsonDecode(movieDetailResponse.body);
+      movieDetails = MovieDetails.fromJson(decRes);
+    } else {
+      // If that call was not successful, throw an error.
+      throw Exception('Failed to load api');
+    }
+  }
+
+   String getGenres(List<Genres> genres) {
+    String genre = "";
+    
+
+    for (var i = 0; i < genres.length; i++) {
+      if (i != genres.length - 1) {
+        genre = genre + genres[i].name + ", ";
+      } else {
+        genre = genre + genres[i].name;
+      }
+    }
+
+    return genre;
+  }
+
+  Widget errorWidget() {
+    return Center(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+          Text("Something Went Wrong!!!",
+              style: TextStyle(fontSize: 22.0, color: Colors.grey[500])),
+          SizedBox(height: 10.0),
+          RaisedButton(
+              color: Theme.of(context).accentColor,
+              child: Text("Try Again",
+                  style: TextStyle(fontSize: 18.0, color: Colors.white)),
+              onPressed: () {
+                setState(() {
+                  _getMovieDetails = getMovieDetails();
+                });
+              })
+        ]));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        controller: _scrollController,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              expandedHeight: kExpandedHeight,
-              floating: false,
-              pinned: true,
-              title: _showTitle ? Text('_SliverAppBar') : null,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  color: Theme.of(context).accentColor,
-                  child: Stack(
-                    children: <Widget>[
-                      Column(
+        body: FutureBuilder(
+      future: _getMovieDetails,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            return Text("");
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+            return Center(child: CircularProgressIndicator());
+          case ConnectionState.done:
+            if (snapshot.hasError) return errorWidget();
+            return movieDetailsBody();
+        }
+        return null;
+      },
+    ));
+  }
+
+  Widget movieDetailsBody() {
+    return NestedScrollView(
+      controller: _scrollController,
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget>[
+          SliverAppBar(
+            expandedHeight: kExpandedHeight,
+            floating: false,
+            pinned: true,
+            title: _showTitle ? Text(movieDetails.title) : null,
+            flexibleSpace: FlexibleSpaceBar(
+              background: Container(
+                color: Theme.of(context).accentColor,
+                child: Stack(
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Container(
+                          width: screenWidth,
+                          height: kExpandedHeight * 0.66,
+                          color: Colors.grey,
+                          child: CachedNetworkImage(
+                            imageUrl:
+                                "https://image.tmdb.org/t/p/w780" + movieDetails.backdropPath,
+                            fit: BoxFit.cover,
+                          ),
+                        )
+                      ],
+                    ),
+                    Positioned(
+                      left: 0.0,
+                      top: 0.0,
+                      child: Container(
+                        width: screenWidth,
+                        height: kExpandedHeight * 0.66,
+                        color: Colors.black.withOpacity(0.2),
+                      ),
+                    ),
+                    Positioned(
+                      left: 20.0,
+                      bottom: 32.0,
+                      right: 16.0,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
                         children: <Widget>[
                           Container(
-                            height: kExpandedHeight * 0.66,
+                            width: screenWidth / 4,
+                            height: (screenWidth / 4) *
+                                    (screenHeight / screenWidth) -
+                                30.0,
                             color: Colors.grey,
                             child: CachedNetworkImage(
-                              imageUrl:
-                                  "https://png.pngtree.com/thumb_back/fw800/back_pic/03/87/17/0857d1192214be1.jpg",
-                              fit: BoxFit.fill,
+                            imageUrl:
+                                "https://image.tmdb.org/t/p/w342" + movieDetails.posterPath,
+                            fit: BoxFit.cover,
+                          ),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Flexible(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.max,
+                              children: <Widget>[
+                                SizedBox(
+                                  height: 24.0,
+                                ),
+                                Text(
+                                    movieDetails.title,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22.0,
+                                    )),
+                                SizedBox(
+                                  height: 8.0,
+                                ),
+                                Text(getGenres(movieDetails.genres),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 13.0,
+                                    ))
+                              ],
                             ),
-                          )
+                          ),
                         ],
                       ),
-                      Positioned(
-                        left: 20.0,
-                        bottom: 32.0,
-                        right: 16.0,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Container(
-                              width: screenWidth / 4,
-                              height: (screenWidth / 4) *
-                                      (screenHeight / screenWidth) -
-                                  30.0,
-                              color: Colors.red,
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            Flexible(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.max,
-                                children: <Widget>[
-                                 SizedBox(height: 24.0,),
-                                  Text(
-                                      'Fantastic Beasts: The Crimes of Grindelwald',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 22.0,
-                                      )),
-                                      SizedBox(height: 8.0,),
-                                      Text(
-                                      'Family, Fantasy, Adventure',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.normal,
-                                        fontSize: 14.0,
-                                      ))
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 ),
               ),
             ),
-          ];
-        },
-        body: Center(
-          child: Text("Sample text"),
-        ),
+          ),
+        ];
+      },
+      body: Center(
+        child: Text("Sample text"),
       ),
     );
   }

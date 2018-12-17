@@ -276,22 +276,22 @@ class _TvShowsState extends State<TvShows> {
       case TvShowsTypes.AIRINGTODAY:
         title = "Airing Today";
         baseurl =
-            'https://api.themoviedb.org/3/tv/airing_today?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/tv/airing_today?api_key=$apikey&page=';
         break;
       case TvShowsTypes.ONTHEAIR:
         title = "On the Air";
         baseurl =
-            'https://api.themoviedb.org/3/tv/on_the_air?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/tv/on_the_air?api_key=$apikey&page=';
         break;
       case TvShowsTypes.POPULAR:
         title = "Popular";
         baseurl =
-            'https://api.themoviedb.org/3/tv/popular?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/tv/popular?api_key=$apikey&page=';
         break;
       case TvShowsTypes.TOPRATED:
         title = "Top Rated";
         baseurl =
-            'https://api.themoviedb.org/3/tv/top_rated?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/tv/top_rated?api_key=$apikey&page=';
         break;
     }
 
@@ -345,7 +345,7 @@ class _TvShowsState extends State<TvShows> {
 
   Future<void> getTVShows() async {
     final airingTodayResponse = await http.get(
-        'https://api.themoviedb.org/3/tv/airing_today?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/tv/airing_today?api_key=$apikey&page=1');
     if (airingTodayResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(airingTodayResponse.body);
@@ -356,7 +356,7 @@ class _TvShowsState extends State<TvShows> {
     }
 
     final onTheAirResponse = await http.get(
-        'https://api.themoviedb.org/3/tv/on_the_air?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/tv/on_the_air?api_key=$apikey&page=1');
     if (onTheAirResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(onTheAirResponse.body);
@@ -367,7 +367,7 @@ class _TvShowsState extends State<TvShows> {
     }
 
     final popularResponse = await http.get(
-        'https://api.themoviedb.org/3/tv/popular?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/tv/popular?api_key=$apikey&page=1');
     if (popularResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(popularResponse.body);
@@ -378,7 +378,7 @@ class _TvShowsState extends State<TvShows> {
     }
 
     final topRatedResponse = await http.get(
-        'https://api.themoviedb.org/3/tv/top_rated?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/tv/top_rated?api_key=$apikey&page=1');
     if (topRatedResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(topRatedResponse.body);

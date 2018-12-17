@@ -48,7 +48,7 @@ class _MoviesState extends State<Movies> {
       borderRadius: BorderRadius.all(Radius.circular(5.0)),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MovieDetail()));
+            context, MaterialPageRoute(builder: (context) => MovieDetailScreen(movie.id)));
       },
       child: Card(
         child: Container(
@@ -283,23 +283,23 @@ class _MoviesState extends State<Movies> {
       case MovieTypes.NOWSHOWING:
         title = "Now Showing";
         baseurl =
-            'https://api.themoviedb.org/3/movie/now_playing?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/movie/now_playing?api_key=$apikey&page=';
 
         break;
       case MovieTypes.POPULAR:
         title = "Popular";
         baseurl =
-            'https://api.themoviedb.org/3/movie/popular?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/movie/popular?api_key=$apikey&page=';
         break;
       case MovieTypes.UPCOMING:
         title = "Upcoming";
         baseurl =
-            'https://api.themoviedb.org/3/movie/upcoming?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/movie/upcoming?api_key=$apikey&page=';
         break;
       case MovieTypes.TOPRATED:
         title = "Top Rated";
         baseurl =
-            'https://api.themoviedb.org/3/movie/top_rated?api_key=$apikey&language=en-US&page=';
+            'https://api.themoviedb.org/3/movie/top_rated?api_key=$apikey&page=';
         break;
     }
 
@@ -353,7 +353,7 @@ class _MoviesState extends State<Movies> {
 
   Future<void> getMovies() async {
     final nowShowingResponse = await http.get(
-        'https://api.themoviedb.org/3/movie/now_playing?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/movie/now_playing?api_key=$apikey&page=1');
     if (nowShowingResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(nowShowingResponse.body);
@@ -364,7 +364,7 @@ class _MoviesState extends State<Movies> {
     }
 
     final popularResponse = await http.get(
-        'https://api.themoviedb.org/3/movie/popular?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/movie/popular?api_key=$apikey&page=1');
     if (popularResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(popularResponse.body);
@@ -375,7 +375,7 @@ class _MoviesState extends State<Movies> {
     }
 
     final upcomingResponse = await http.get(
-        'https://api.themoviedb.org/3/movie/upcoming?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/movie/upcoming?api_key=$apikey&page=1');
     if (upcomingResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(upcomingResponse.body);
@@ -386,7 +386,7 @@ class _MoviesState extends State<Movies> {
     }
 
     final topRatedResponse = await http.get(
-        'https://api.themoviedb.org/3/movie/top_rated?api_key=$apikey&language=en-US&page=1');
+        'https://api.themoviedb.org/3/movie/top_rated?api_key=$apikey&page=1');
     if (topRatedResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(topRatedResponse.body);
@@ -397,7 +397,7 @@ class _MoviesState extends State<Movies> {
     }
 
     final genreResponse = await http.get(
-        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apikey&language=en-US');
+        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apikey');
     if (genreResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(genreResponse.body);
