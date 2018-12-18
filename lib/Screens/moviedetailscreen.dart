@@ -218,106 +218,104 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
   }
 
   Widget movieDetailsBody() {
-    return ListView(
-      shrinkWrap: true,
-      primary: false,
-      physics: ClampingScrollPhysics(),
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              Icon(
-                Icons.star,
-                color: Colors.orange,
-                size: 28.0,
-              ),
-              SizedBox(
-                width: 5.0,
-              ),
-              Text(
-                "${movieDetails.voteAverage}",
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold),
-              ),
-              Text(
-                '/10',
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal),
-              ),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Icon(
+                  Icons.star,
+                  color: Colors.orange,
+                  size: 28.0,
+                ),
+                SizedBox(
+                  width: 5.0,
+                ),
+                Text(
+                  "${movieDetails.voteAverage}",
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  '/10',
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.normal),
+                ),
+              ],
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-          child: Column(
-            children: <Widget>[
-              Text(
-                movieDetails.overview,
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.normal),
-              ),
-              SizedBox(
-                height: 16.0,
-              ),
-              Row(
-                children: <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text("Release Date",
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Column(
+              children: <Widget>[
+                Text(
+                  movieDetails.overview,
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.normal),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Row(
+                  children: <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text("Release Date",
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold)),
+                        Text("Runtime",
+                            style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 15.0,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          dateTimeFormat(movieDetails.releaseDate),
                           style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 15.0,
-                              fontWeight: FontWeight.bold)),
-                      Text("Runtime",
+                              fontWeight: FontWeight.normal),
+                        ),
+                        Text(
+                          "${movieDetails.runtime}",
                           style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 15.0,
-                              fontWeight: FontWeight.bold))
-                    ],
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        dateTimeFormat(movieDetails.releaseDate),
-                        style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.normal),
-                      ),
-                      Text(
-                        "${movieDetails.runtime}",
-                        style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 15.0,
-                            fontWeight: FontWeight.normal),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                              fontWeight: FontWeight.normal),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 100.0,)
-      ],
+        ],
+      ),
     );
   }
 
   String dateTimeFormat(String mDate) {
-
     var parsedDate = DateTime.parse(mDate);
     var formatter = new DateFormat('MMM d, y');
     String formatted = formatter.format(parsedDate);
