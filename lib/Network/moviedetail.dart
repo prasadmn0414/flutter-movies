@@ -23,7 +23,10 @@ class MovieDetails {
   String title;
   bool video;
   double voteAverage;
-  int voteCount;
+  double voteCount;
+  Videos videos;
+  Credits credits;
+  Similar similar;
 
   MovieDetails(
       {this.adult,
@@ -50,7 +53,10 @@ class MovieDetails {
       this.title,
       this.video,
       this.voteAverage,
-      this.voteCount});
+      this.voteCount,
+      this.videos,
+      this.credits,
+      this.similar});
 
   MovieDetails.fromJson(Map<String, dynamic> json) {
     adult = json['adult'];
@@ -98,15 +104,23 @@ class MovieDetails {
     tagline = json['tagline'];
     title = json['title'];
     video = json['video'];
-    voteAverage = json['vote_average'];
-    voteCount = json['vote_count'];
+    voteAverage = json['vote_average'] * 1.0;
+    voteCount = json['vote_count'] * 1.0;
+    videos =
+        json['videos'] != null ? new Videos.fromJson(json['videos']) : null;
+    credits =
+        json['credits'] != null ? new Credits.fromJson(json['credits']) : null;
+    similar =
+        json['similar'] != null ? new Similar.fromJson(json['similar']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['adult'] = this.adult;
     data['backdrop_path'] = this.backdropPath;
-    data['belongs_to_collection'] = this.belongsToCollection;
+    if (this.belongsToCollection != null) {
+      data['belongs_to_collection'] = this.belongsToCollection.toJson();
+    }
     data['budget'] = this.budget;
     if (this.genres != null) {
       data['genres'] = this.genres.map((v) => v.toJson()).toList();
@@ -140,6 +154,15 @@ class MovieDetails {
     data['video'] = this.video;
     data['vote_average'] = this.voteAverage;
     data['vote_count'] = this.voteCount;
+    if (this.videos != null) {
+      data['videos'] = this.videos.toJson();
+    }
+    if (this.credits != null) {
+      data['credits'] = this.credits.toJson();
+    }
+    if (this.similar != null) {
+      data['similar'] = this.similar.toJson();
+    }
     return data;
   }
 }
@@ -168,7 +191,6 @@ class BelongsToCollection {
     return data;
   }
 }
-
 
 class Genres {
   int id;
@@ -248,6 +270,297 @@ class SpokenLanguages {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['iso_639_1'] = this.iso6391;
     data['name'] = this.name;
+    return data;
+  }
+}
+
+class Videos {
+  List<VideoResults> results;
+
+  Videos({this.results});
+
+  Videos.fromJson(Map<String, dynamic> json) {
+    if (json['results'] != null) {
+      results = new List<VideoResults>();
+      json['results'].forEach((v) {
+        VideoResults result = new VideoResults.fromJson(v);
+        if(result.type.toLowerCase() == "trailer") {
+          results.add(new VideoResults.fromJson(v));
+        }
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.results != null) {
+      data['results'] = this.results.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class VideoResults {
+  String id;
+  String iso6391;
+  String iso31661;
+  String key;
+  String name;
+  String site;
+  int size;
+  String type;
+
+  VideoResults(
+      {this.id,
+      this.iso6391,
+      this.iso31661,
+      this.key,
+      this.name,
+      this.site,
+      this.size,
+      this.type});
+
+  VideoResults.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    iso6391 = json['iso_639_1'];
+    iso31661 = json['iso_3166_1'];
+    key = json['key'];
+    name = json['name'];
+    site = json['site'];
+    size = json['size'];
+    type = json['type'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['iso_639_1'] = this.iso6391;
+    data['iso_3166_1'] = this.iso31661;
+    data['key'] = this.key;
+    data['name'] = this.name;
+    data['site'] = this.site;
+    data['size'] = this.size;
+    data['type'] = this.type;
+    return data;
+  }
+}
+
+class Credits {
+  List<Cast> cast;
+  List<Crew> crew;
+
+  Credits({this.cast, this.crew});
+
+  Credits.fromJson(Map<String, dynamic> json) {
+    if (json['cast'] != null) {
+      cast = new List<Cast>();
+      json['cast'].forEach((v) {
+        cast.add(new Cast.fromJson(v));
+      });
+    }
+    if (json['crew'] != null) {
+      crew = new List<Crew>();
+      json['crew'].forEach((v) {
+        crew.add(new Crew.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    if (this.cast != null) {
+      data['cast'] = this.cast.map((v) => v.toJson()).toList();
+    }
+    if (this.crew != null) {
+      data['crew'] = this.crew.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Cast {
+  int castId;
+  String character;
+  String creditId;
+  int gender;
+  int id;
+  String name;
+  int order;
+  String profilePath;
+
+  Cast(
+      {this.castId,
+      this.character,
+      this.creditId,
+      this.gender,
+      this.id,
+      this.name,
+      this.order,
+      this.profilePath});
+
+  Cast.fromJson(Map<String, dynamic> json) {
+    castId = json['cast_id'];
+    character = json['character'];
+    creditId = json['credit_id'];
+    gender = json['gender'];
+    id = json['id'];
+    name = json['name'];
+    order = json['order'];
+    profilePath = json['profile_path'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['cast_id'] = this.castId;
+    data['character'] = this.character;
+    data['credit_id'] = this.creditId;
+    data['gender'] = this.gender;
+    data['id'] = this.id;
+    data['name'] = this.name;
+    data['order'] = this.order;
+    data['profile_path'] = this.profilePath;
+    return data;
+  }
+}
+
+class Crew {
+  String creditId;
+  String department;
+  int gender;
+  int id;
+  String job;
+  String name;
+  String profilePath;
+
+  Crew(
+      {this.creditId,
+      this.department,
+      this.gender,
+      this.id,
+      this.job,
+      this.name,
+      this.profilePath});
+
+  Crew.fromJson(Map<String, dynamic> json) {
+    creditId = json['credit_id'];
+    department = json['department'];
+    gender = json['gender'];
+    id = json['id'];
+    job = json['job'];
+    name = json['name'];
+    profilePath = json['profile_path'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['credit_id'] = this.creditId;
+    data['department'] = this.department;
+    data['gender'] = this.gender;
+    data['id'] = this.id;
+    data['job'] = this.job;
+    data['name'] = this.name;
+    data['profile_path'] = this.profilePath;
+    return data;
+  }
+}
+
+class Similar {
+  int page;
+  List<SimilarResults> results;
+  int totalPages;
+  int totalResults;
+
+  Similar({this.page, this.results, this.totalPages, this.totalResults});
+
+  Similar.fromJson(Map<String, dynamic> json) {
+    page = json['page'];
+    if (json['results'] != null) {
+      results = new List<SimilarResults>();
+      json['results'].forEach((v) {
+        results.add(new SimilarResults.fromJson(v));
+      });
+    }
+    totalPages = json['total_pages'];
+    totalResults = json['total_results'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['page'] = this.page;
+    if (this.results != null) {
+      data['results'] = this.results.map((v) => v.toJson()).toList();
+    }
+    data['total_pages'] = this.totalPages;
+    data['total_results'] = this.totalResults;
+    return data;
+  }
+}
+
+class SimilarResults {
+  bool adult;
+  String backdropPath;
+  List<int> genreIds;
+  int id;
+  String originalLanguage;
+  String originalTitle;
+  String overview;
+  String posterPath;
+  String releaseDate;
+  String title;
+  bool video;
+  double voteAverage;
+  int voteCount;
+  double popularity;
+
+  SimilarResults(
+      {this.adult,
+      this.backdropPath,
+      this.genreIds,
+      this.id,
+      this.originalLanguage,
+      this.originalTitle,
+      this.overview,
+      this.posterPath,
+      this.releaseDate,
+      this.title,
+      this.video,
+      this.voteAverage,
+      this.voteCount,
+      this.popularity});
+
+  SimilarResults.fromJson(Map<String, dynamic> json) {
+    adult = json['adult'];
+    backdropPath = json['backdrop_path'];
+    genreIds = json['genre_ids'].cast<int>();
+    id = json['id'];
+    originalLanguage = json['original_language'];
+    originalTitle = json['original_title'];
+    overview = json['overview'];
+    posterPath = json['poster_path'];
+    releaseDate = json['release_date'];
+    title = json['title'];
+    video = json['video'];
+    voteAverage = json['vote_average'];
+    voteCount = json['vote_count'];
+    popularity = json['popularity'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['adult'] = this.adult;
+    data['backdrop_path'] = this.backdropPath;
+    data['genre_ids'] = this.genreIds;
+    data['id'] = this.id;
+    data['original_language'] = this.originalLanguage;
+    data['original_title'] = this.originalTitle;
+    data['overview'] = this.overview;
+    data['poster_path'] = this.posterPath;
+    data['release_date'] = this.releaseDate;
+    data['title'] = this.title;
+    data['video'] = this.video;
+    data['vote_average'] = this.voteAverage;
+    data['vote_count'] = this.voteCount;
+    data['popularity'] = this.popularity;
     return data;
   }
 }

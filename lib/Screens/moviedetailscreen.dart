@@ -47,7 +47,8 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
 
   Future<void> getMovieDetails() async {
     int movieid = widget.movieid;
-    String url = 'https://api.themoviedb.org/3/movie/$movieid?api_key=$apikey';
+    String url =
+        'https://api.themoviedb.org/3/movie/$movieid?api_key=$apikey&append_to_response=videos,credits,similar';
     final movieDetailResponse = await http.get(url);
     if (movieDetailResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
@@ -220,6 +221,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
   Widget movieDetailsBody() {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Padding(
             padding: EdgeInsets.only(left: 16.0, right: 16.0, top: 16.0),
@@ -310,9 +312,74 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text("Trailers",
+                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500)),
+          ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            height: (MediaQuery.of(context).size.width * 0.5) + 40.0,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                primary: false,
+                itemCount: movieDetails.videos.results.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return getTrailerCard(movieDetails.videos.results[index]);
+                }),
+          ),
         ],
       ),
     );
+  }
+
+  Widget getTrailerCard(VideoResults result) {
+    
+    double width = MediaQuery.of(context).size.height * 0.5;
+
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Column(
+          children: <Widget>[
+            Container(
+              width: width,
+              height: constraints.maxHeight * 0.82,
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(5.0),
+                child: CachedNetworkImage(
+                  imageUrl: "https://i1.ytimg.com/vi/" +
+                      result.key +
+                      "/sddefault.jpg",
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Container(
+              width: width,
+              height: constraints.maxHeight * 0.18,
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Center(
+                child: Text(result.name,
+                textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.normal)),
+              ),
+            )
+          ],
+        )
+        }));
+       
   }
 
   String dateTimeFormat(String mDate) {
