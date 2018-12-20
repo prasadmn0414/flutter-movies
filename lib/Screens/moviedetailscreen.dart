@@ -137,7 +137,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                           child: CachedNetworkImage(
                             imageUrl: "https://image.tmdb.org/t/p/w780" +
                                 movieDetails.backdropPath,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.fill,
                           ),
                         )
                       ],
@@ -167,7 +167,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                             child: CachedNetworkImage(
                               imageUrl: "https://image.tmdb.org/t/p/w342" +
                                   movieDetails.posterPath,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.fill,
                             ),
                           ),
                           SizedBox(
@@ -297,7 +297,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                               fontWeight: FontWeight.normal),
                         ),
                         Text(
-                          "${movieDetails.runtime}",
+                          "${(movieDetails.runtime ~/ 60.0)} hr ${(movieDetails.runtime % 60.0).toInt()} mins",
                           style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 15.0,
