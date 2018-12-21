@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MovieDetailScreen extends StatefulWidget {
   final int movieid;
@@ -313,12 +314,14 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(
+                left: 22.0, top: 16.0, right: 16.0, bottom: 16.0),
             child: Text("Trailers",
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w500)),
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500)),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 8.0),
+            padding:
+                EdgeInsets.only(left: 4.0, top: 0.0, bottom: 0.0, right: 4.0),
             height: (MediaQuery.of(context).size.width * 0.5) + 40.0,
             child: ListView.builder(
                 scrollDirection: Axis.horizontal,
@@ -330,56 +333,240 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                   return getTrailerCard(movieDetails.videos.results[index]);
                 }),
           ),
+          Divider(
+            color: Colors.grey,
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 22.0, top: 16.0, right: 16.0, bottom: 16.0),
+            child: Text("Cast",
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500)),
+          ),
+          Container(
+            //color: Colors.lightBlueAccent,
+            padding: EdgeInsets.all(8.0),
+            height: (MediaQuery.of(context).size.width * 0.5) + 30.0,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                primary: false,
+                itemCount: movieDetails.credits.cast.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return getCastCard(movieDetails.credits.cast[index]);
+                }),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 22.0, top: 16.0, right: 16.0, bottom: 16.0),
+            child: Text("Similar Movies",
+                style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.w500)),
+          ),
+          Container(
+            height: (MediaQuery.of(context).size.width * 0.9 * 0.8) +
+                8.0, // height = 90% of screenwidth + 8
+            //color: Colors.amber,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                physics: ClampingScrollPhysics(),
+                primary: false,
+                itemCount: movieDetails.similar.results.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return getSmallCard(movieDetails.similar.results[index]);
+                }),
+          ),
+          SizedBox(
+            height: 10.0,
+          )
         ],
       ),
     );
   }
 
   Widget getTrailerCard(VideoResults result) {
-    
     double width = MediaQuery.of(context).size.height * 0.5;
 
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: LayoutBuilder(builder: (context, constraints) {
           return Column(
-          children: <Widget>[
-            Container(
-              width: width,
-              height: constraints.maxHeight * 0.82,
-              decoration: BoxDecoration(
-                color: Colors.green,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: CachedNetworkImage(
-                  imageUrl: "https://i1.ytimg.com/vi/" +
-                      result.key +
-                      "/sddefault.jpg",
-                  fit: BoxFit.cover,
+            children: <Widget>[
+              Material(
+                elevation: 3.0,
+                child: InkWell(
+                  onTap: () {
+                    _launchURL("https://www.youtube.com/watch?v=" + result.key);
+                  },
+                  child: Container(
+                    width: width,
+                    height: constraints.maxHeight * 0.82,
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5.0),
+                      child: CachedNetworkImage(
+                        imageUrl: "https://i1.ytimg.com/vi/" +
+                            result.key +
+                            "/sddefault.jpg",
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-            Container(
-              width: width,
-              height: constraints.maxHeight * 0.18,
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Center(
-                child: Text(result.name,
-                textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.normal)),
-              ),
-            )
-          ],
-        )
+              Container(
+                width: width,
+                height: constraints.maxHeight * 0.18,
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Center(
+                  child: Text(result.name,
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.normal)),
+                ),
+              )
+            ],
+          );
         }));
-       
+  }
+
+  Widget getCastCard(Cast cast) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: LayoutBuilder(builder: (context, constraints) {
+          var width = constraints.maxHeight * 0.55;
+          return Column(
+            children: <Widget>[
+              Container(
+                width: width,
+                height: width,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.circular(width / 2),
+                ),
+                child: cast.profilePath != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(width / 2),
+                        child: CachedNetworkImage(
+                          imageUrl: "https://image.tmdb.org/t/p/w342" +
+                              cast.profilePath,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : null,
+              ),
+              SizedBox(
+                height: 8.0,
+              ),
+              Container(
+                  //color: Colors.greenAccent,
+                  width: constraints.maxHeight * 0.8,
+                  height: constraints.maxHeight * 0.4,
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Column(
+                    children: <Widget>[
+                      Text(cast.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold)),
+                      SizedBox(
+                        height: 3.0,
+                      ),
+                      Text(cast.character,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 15.0,
+                              fontWeight: FontWeight.normal)),
+                    ],
+                  ))
+            ],
+          );
+        }));
+  }
+
+  Widget getSmallCard(SimilarResults movie) {
+    double width = MediaQuery.of(context).size.width * 0.3;
+    // double height = 100.0;//MediaQuery.of(context).size.width * 0.9 * 0.8;
+
+    return Card(child: LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        width: width,
+        height: constraints.maxHeight,
+        child: Column(children: <Widget>[
+          Container(
+            width: constraints.maxWidth,
+            height: constraints.maxHeight * 0.7,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  topRight: Radius.circular(5.0)),
+              /*image: DecorationImage(
+                  image: NetworkImage(
+                      "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+                  fit: BoxFit.cover,
+                )*/
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(5.0),
+                  topRight: Radius.circular(5.0)),
+              child: CachedNetworkImage(
+                imageUrl: "https://image.tmdb.org/t/p/w342" + movie.posterPath,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight * 0.3,
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            movie.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ]),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Icon(Icons.favorite_border,
+                          size: 20.0, color: Colors.grey)
+                    ],
+                  )
+                ],
+              ))
+        ]),
+      );
+    }));
   }
 
   String dateTimeFormat(String mDate) {
@@ -387,5 +574,13 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
     var formatter = new DateFormat('MMM d, y');
     String formatted = formatter.format(parsedDate);
     return formatted;
+  }
+
+  _launchURL(url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }

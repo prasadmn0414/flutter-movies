@@ -48,7 +48,9 @@ class _MoviesState extends State<Movies> {
       borderRadius: BorderRadius.all(Radius.circular(5.0)),
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => MovieDetailScreen(movie.id)));
+            context,
+            MaterialPageRoute(
+                builder: (context) => MovieDetailScreen(movie.id)));
       },
       child: Card(
         child: Container(
@@ -150,71 +152,81 @@ class _MoviesState extends State<Movies> {
     double width = MediaQuery.of(context).size.width * 0.3;
     // double height = 100.0;//MediaQuery.of(context).size.width * 0.9 * 0.8;
 
-    return Card(child: LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        width: width,
-        height: constraints.maxHeight,
-        child: Column(children: <Widget>[
-          Container(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0)),
-              /*image: DecorationImage(
-                  image: NetworkImage(
-                      "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+    return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MovieDetailScreen(movie.id)));
+      },
+      child: Card(child: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          width: width,
+          height: constraints.maxHeight,
+          child: Column(children: <Widget>[
+            Container(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight * 0.7,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                /*image: DecorationImage(
+                    image: NetworkImage(
+                        "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+                    fit: BoxFit.cover,
+                  )*/
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://image.tmdb.org/t/p/w342" + movie.posterPath,
                   fit: BoxFit.cover,
-                )*/
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0)),
-              child: CachedNetworkImage(
-                imageUrl: "https://image.tmdb.org/t/p/w342" + movie.posterPath,
-                fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight * 0.3,
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text(
-                            movie.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ]),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(Icons.favorite_border,
-                          size: 20.0, color: Colors.grey)
-                    ],
-                  )
-                ],
-              ))
-        ]),
-      );
-    }));
+            Container(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight * 0.3,
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Text(
+                              movie.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ]),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Icon(Icons.favorite_border,
+                            size: 20.0, color: Colors.grey)
+                      ],
+                    )
+                  ],
+                ))
+          ]),
+        );
+      })),
+    );
 
     /*return Card(
       child: Container(
@@ -396,8 +408,8 @@ class _MoviesState extends State<Movies> {
       throw Exception('Failed to load api');
     }
 
-    final genreResponse = await http.get(
-        'https://api.themoviedb.org/3/genre/movie/list?api_key=$apikey');
+    final genreResponse = await http
+        .get('https://api.themoviedb.org/3/genre/movie/list?api_key=$apikey');
     if (genreResponse.statusCode == 200) {
       // If the call to the server was successful, parse the JSON
       var decRes = jsonDecode(genreResponse.body);
