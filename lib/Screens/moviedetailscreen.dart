@@ -20,6 +20,9 @@ var screenWidth = 0.0;
 var screenHeight = 0.0;
 
 class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
+
+  double offset = 0.0 ;
+
   ScrollController _scrollController;
   MovieDetails movieDetails;
 
@@ -27,9 +30,17 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
 
   @override
   void initState() {
-    _scrollController = ScrollController()..addListener(() => setState(() {}));
+    _scrollController = ScrollController()..addListener(() => setState(() {
+      offset = _scrollController.offset;
+    }));
     _getMovieDetails = getMovieDetails();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -43,7 +54,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
 
   bool get _showTitle {
     return _scrollController.hasClients &&
-        _scrollController.offset > kExpandedHeight - kToolbarHeight;
+        offset > kExpandedHeight - kToolbarHeight;
   }
 
   Future<void> getMovieDetails() async {
@@ -502,71 +513,81 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
     double width = MediaQuery.of(context).size.width * 0.3;
     // double height = 100.0;//MediaQuery.of(context).size.width * 0.9 * 0.8;
 
-    return Card(child: LayoutBuilder(builder: (context, constraints) {
-      return Container(
-        width: width,
-        height: constraints.maxHeight,
-        child: Column(children: <Widget>[
-          Container(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0)),
-              /*image: DecorationImage(
-                  image: NetworkImage(
-                      "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+    return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MovieDetailScreen(movie.id)));
+      },
+      child: Card(child: LayoutBuilder(builder: (context, constraints) {
+        return Container(
+          width: width,
+          height: constraints.maxHeight,
+          child: Column(children: <Widget>[
+            Container(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight * 0.7,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                /*image: DecorationImage(
+                    image: NetworkImage(
+                        "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+                    fit: BoxFit.cover,
+                  )*/
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://image.tmdb.org/t/p/w342" + movie.posterPath,
                   fit: BoxFit.cover,
-                )*/
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0)),
-              child: CachedNetworkImage(
-                imageUrl: "https://image.tmdb.org/t/p/w342" + movie.posterPath,
-                fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight * 0.3,
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  Expanded(
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Text(
-                            movie.title,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        ]),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      Icon(Icons.favorite_border,
-                          size: 20.0, color: Colors.grey)
-                    ],
-                  )
-                ],
-              ))
-        ]),
-      );
-    }));
+            Container(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight * 0.3,
+                padding: EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Text(
+                              movie.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          ]),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Icon(Icons.favorite_border,
+                            size: 20.0, color: Colors.grey)
+                      ],
+                    )
+                  ],
+                ))
+          ]),
+        );
+      })),
+    );
   }
 
   String dateTimeFormat(String mDate) {
@@ -577,7 +598,6 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
   }
 
   _launchURL(url) async {
-
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -587,23 +607,23 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
 
   _showDialog() {
     showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          // return object of type Dialog
-          return AlertDialog(
-            title: new Text("Movies"),
-            content: new Text("Could not play video !!!"),
-            actions: <Widget>[
-              // usually buttons at the bottom of the dialog
-              new FlatButton(
-                child: new Text("Close"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Movies"),
+          content: new Text("Could not play video !!!"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
