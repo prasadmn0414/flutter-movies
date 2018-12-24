@@ -1,6 +1,7 @@
 import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_app/Screens/moviedetailscreen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_movie_app/Network/movies_list.dart';
@@ -129,65 +130,76 @@ class MovieTileState extends State<MovieTile> {
   }
 
   Widget getSmallCard(Results movie) {
-    return Card(child: LayoutBuilder(builder: (context, constraints) {
-      return Column(children: <Widget>[
-        Container(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight * 0.7,
-            decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(5.0),
-                  topRight: Radius.circular(5.0)),
-              /*image: DecorationImage(
-                image: NetworkImage(
-                    "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
-                fit: BoxFit.cover,
-              )*/
-            ),
-            child: ClipRRect(
-               borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(5.0),
-                        topRight: Radius.circular(5.0)),
-                          child: CachedNetworkImage(
-                imageUrl: "https://image.tmdb.org/t/p/w342" + movie.posterPath,
-                fit: BoxFit.cover,
+    return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => MovieDetailScreen(movie.id)));
+      },
+      child: Card(child: LayoutBuilder(builder: (context, constraints) {
+        return Column(children: <Widget>[
+          Container(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight * 0.7,
+              decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                /*image: DecorationImage(
+                  image: NetworkImage(
+                      "https://image.tmdb.org/t/p/w342/" + movie.posterPath),
+                  fit: BoxFit.cover,
+                )*/
               ),
-            )),
-        Container(
-            width: constraints.maxWidth,
-            height: constraints.maxHeight * 0.3,
-            padding: EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Expanded(
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        Text(
-                          movie.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey[600],
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      ]),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5.0),
+                    topRight: Radius.circular(5.0)),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://image.tmdb.org/t/p/w342" + movie.posterPath,
+                  fit: BoxFit.cover,
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Icon(Icons.favorite_border, size: 20.0, color: Colors.grey)
-                  ],
-                )
-              ],
-            ))
-      ]);
-    }));
+              )),
+          Container(
+              width: constraints.maxWidth,
+              height: constraints.maxHeight * 0.3,
+              padding: EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            movie.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        ]),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      Icon(Icons.favorite_border,
+                          size: 20.0, color: Colors.grey)
+                    ],
+                  )
+                ],
+              ))
+        ]);
+      })),
+    );
   }
 
   @override
