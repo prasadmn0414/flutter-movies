@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_app/Screens/tvdetailsscreen.dart';
 import 'package:flutter_movie_app/Screens/viewallscreentvshows.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -43,95 +44,104 @@ class _TvShowsState extends State<TvShows> {
     double width = MediaQuery.of(context).size.width * 0.9;
     double height = width * 0.8;
 
-    return Card(
-      child: Container(
-        width: width,
-        height: height,
-        child: Column(
-          children: <Widget>[
-            Stack(
-              alignment: Alignment.bottomCenter,
-              children: <Widget>[
-                Container(
-                    width: width,
-                    height: height * 0.8,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5.0),
-                          topRight: Radius.circular(5.0)),
-                      /*image: DecorationImage(
-                        image: NetworkImage("https://image.tmdb.org/t/p/w780/" +
-                            tvshow.backdropPath),
-                        fit: BoxFit.cover,
-                      )*/
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(5.0),
-                          topRight: Radius.circular(5.0)),
-                      child: CachedNetworkImage(
-                        imageUrl: "https://image.tmdb.org/t/p/w780" +
-                            tvshow.backdropPath,
-                        fit: BoxFit.cover,
+    return InkWell(
+      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TVDetailScreen(tvshow.id)));
+      },
+          child: Card(
+        child: Container(
+          width: width,
+          height: height,
+          child: Column(
+            children: <Widget>[
+              Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  Container(
+                      width: width,
+                      height: height * 0.8,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0)),
+                        /*image: DecorationImage(
+                          image: NetworkImage("https://image.tmdb.org/t/p/w780/" +
+                              tvshow.backdropPath),
+                          fit: BoxFit.cover,
+                        )*/
                       ),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5.0),
+                            topRight: Radius.circular(5.0)),
+                        child: CachedNetworkImage(
+                          imageUrl: "https://image.tmdb.org/t/p/w780" +
+                              tvshow.backdropPath,
+                          fit: BoxFit.cover,
+                        ),
+                      )),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(tvshow.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                  fontWeight: FontWeight.w600)),
+                        ),
+                        SizedBox(width: 10.0),
+                        Text(
+                          "${tvshow.voteAverage}",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600),
+                        ),
+                        Icon(
+                          Icons.star,
+                          color: Colors.white,
+                          size: 15.0,
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                  width: width,
+                  height: height * 0.2,
+                  padding: EdgeInsets.all(8.0),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
-                        child: Text(tvshow.name,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.w600)),
+                        child: Text(
+                          getGenres(tvshow.genreIds),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              TextStyle(color: Colors.grey[500], fontSize: 14.0),
+                        ),
                       ),
-                      SizedBox(width: 10.0),
-                      Text(
-                        "${tvshow.voteAverage}",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      Icon(
-                        Icons.star,
-                        color: Colors.white,
-                        size: 15.0,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: <Widget>[
+                          Icon(Icons.favorite_border,
+                              size: 20.0, color: Colors.grey)
+                        ],
                       )
                     ],
-                  ),
-                ),
-              ],
-            ),
-            Container(
-                width: width,
-                height: height * 0.2,
-                padding: EdgeInsets.all(8.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      child: Text(
-                        getGenres(tvshow.genreIds),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style:
-                            TextStyle(color: Colors.grey[500], fontSize: 14.0),
-                      ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        Icon(Icons.favorite_border,
-                            size: 20.0, color: Colors.grey)
-                      ],
-                    )
-                  ],
-                ))
-          ],
+                  ))
+            ],
+          ),
         ),
       ),
     );
