@@ -135,8 +135,7 @@ class _MoviesState extends State<Movies> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Icon(Icons.favorite_border,
-                              size: 20.0, color: Colors.grey)
+                          FavoriteWidget(true),
                         ],
                       )
                     ],
@@ -478,5 +477,54 @@ class _MoviesState extends State<Movies> {
             return null;
           },
         ));
+  }
+}
+
+class FavoriteWidget extends StatefulWidget {
+
+  final bool isFavorited;
+
+  FavoriteWidget(this.isFavorited);
+
+  @override
+  _FavoriteWidgetState createState() => _FavoriteWidgetState();
+}
+
+class _FavoriteWidgetState extends State<FavoriteWidget> {
+
+ bool _isFavorite = false;
+
+@override
+  void initState() {
+    
+  _isFavorite = widget.isFavorited;
+
+    super.initState();
+  }
+
+void _toggleFavorite() {
+    setState(() {
+      // If the lake is currently favorited, unfavorite it.
+      _isFavorite = !_isFavorite;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    
+
+    return Container(
+      width: 20.0,
+      height: 20.0,
+      child: IconButton(
+        iconSize: 20.0,
+        padding: EdgeInsets.zero,
+        onPressed: () {
+          _toggleFavorite();
+        },
+        icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.grey),
+      ),
+    );
   }
 }
