@@ -135,7 +135,7 @@ class _MoviesState extends State<Movies> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          FavoriteWidget(true),
+                          FavoriteWidget(false),
                         ],
                       )
                     ],
@@ -496,9 +496,7 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
 
 @override
   void initState() {
-    
-  _isFavorite = widget.isFavorited;
-
+    _isFavorite = widget.isFavorited;
     super.initState();
   }
 
@@ -511,18 +509,13 @@ void _toggleFavorite() {
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     return Container(
       width: 20.0,
       height: 20.0,
       child: IconButton(
         iconSize: 20.0,
         padding: EdgeInsets.zero,
-        onPressed: () {
-          _toggleFavorite();
-        },
+        onPressed: _isFavorite ? null : () =>_toggleFavorite(),
         icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.grey),
       ),
     );
