@@ -23,6 +23,7 @@ dependencies:
   cached_network_image: ^0.5.1
   intl: ^0.15.7
   url_launcher: ^4.0.2
+  path_provider: ^0.4.1
 
 dev_dependencies:
   flutter_test:
