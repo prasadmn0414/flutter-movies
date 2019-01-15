@@ -136,7 +136,10 @@ class _MoviesState extends State<Movies> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           FavoriteWidget(isFavorited: false, onFavoritePressed: () {
-                            debugPrint("Fav tapped ${movie.title}");
+                          debugPrint("Fav tapped ${movie.title}");
+                          String res = jsonEncode(movie.toJson());
+                          debugPrint(res);
+                          // Write the string to file for saving favourites
                           },)
                         ],
                       )
