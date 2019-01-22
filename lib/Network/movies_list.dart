@@ -1,10 +1,3 @@
-import 'dart:convert';
-
-
-import 'package:flutter_movie_app/Constants.dart';
-import 'package:flutter_movie_app/Utils/Storage.dart';
-
-
 class MoviesList {
   List<Results> results;
   int page;
@@ -115,26 +108,6 @@ class Results {
     data['overview'] = this.overview;
     data['release_date'] = this.releaseDate;
     return data;
-  }
-
-   bool isFavoriteMovie() {
-
-    bool isFav = true;
-    readFile(favFile).then((String filedata) {
-      List<Results> favMovies = [];
-      if (filedata.length > 0) {
-        jsonDecode(filedata)
-            .forEach((map) => favMovies.add(Results.fromJson(map)));
-      }
-
-      if (favMovies.indexWhere((obj) => obj.id == this.id) == -1) { // -1 means not found
-        isFav = false;
-      }
-
-    });
-
-    return isFav;
-
   }
 
 }

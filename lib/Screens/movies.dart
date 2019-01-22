@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app/Screens/moviedetailscreen.dart';
 import 'dart:convert';
@@ -138,27 +140,29 @@ class _MoviesState extends State<Movies> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
                           FavoriteWidget(
-                            isFavorited: movie.isFavoriteMovie(),
+                            movieid: movie.id,
+                            isFavorited: false,
                             onFavoritePressed: () {
                               debugPrint("Fav tapped ${movie.title}");
                               //String res = jsonEncode(movie.toJson());
-                             // debugPrint(res);
+                              // debugPrint(res);
 
                               // Write the string to file for saving favourites
                               readFile(favFile).then((String filedata) {
                                 List<Results> favMovies = [];
-                                if(filedata.length > 0) {
+                                if (filedata.length > 0) {
                                   jsonDecode(filedata).forEach((map) {
-                                      if(map.id != movie.id) {
-                                          favMovies.add(Results.fromJson(map));
-                                      }
-                                  }); 
+                                    Results obj = Results.fromJson(map);
+                                    if (obj.id != movie.id) {
+                                      favMovies.add(obj);
+                                    }
+                                  });
                                 }
                                 favMovies.add(movie);
-                                
                                 String res = jsonEncode(favMovies);
-                                writeFile(res, favFile);
-
+                                cleanFile(favFile).then((File file) {
+                                  writeFile(res, favFile);
+                                });
                               });
                             },
                           )
@@ -505,5 +509,3 @@ class _MoviesState extends State<Movies> {
         ));
   }
 }
-
-
