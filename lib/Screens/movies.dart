@@ -8,6 +8,8 @@ import 'package:flutter_movie_app/Network/movies_list.dart';
 import 'package:flutter_movie_app/Network/genres.dart';
 import 'package:flutter_movie_app/Screens/viewallscreenmovies.dart';
 import 'package:flutter_movie_app/Constants.dart';
+import 'package:flutter_movie_app/Utils/Favorite.dart';
+import 'package:flutter_movie_app/Utils/Storage.dart';
 
 enum MovieTypes { NOWSHOWING, POPULAR, UPCOMING, TOPRATED }
 
@@ -135,12 +137,31 @@ class _MoviesState extends State<Movies> {
                       Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          FavoriteWidget(isFavorited: false, onFavoritePressed: () {
-                          debugPrint("Fav tapped ${movie.title}");
-                          String res = jsonEncode(movie.toJson());
-                          debugPrint(res);
-                          // Write the string to file for saving favourites
-                          },)
+                          FavoriteWidget(
+                            isFavorited: movie.isFavoriteMovie(),
+                            onFavoritePressed: () {
+                              debugPrint("Fav tapped ${movie.title}");
+                              //String res = jsonEncode(movie.toJson());
+                             // debugPrint(res);
+
+                              // Write the string to file for saving favourites
+                              readFile(favFile).then((String filedata) {
+                                List<Results> favMovies = [];
+                                if(filedata.length > 0) {
+                                  jsonDecode(filedata).forEach((map) {
+                                      if(map.id != movie.id) {
+                                          favMovies.add(Results.fromJson(map));
+                                      }
+                                  }); 
+                                }
+                                favMovies.add(movie);
+                                
+                                String res = jsonEncode(favMovies);
+                                writeFile(res, favFile);
+
+                              });
+                            },
+                          )
                         ],
                       )
                     ],
@@ -485,49 +506,4 @@ class _MoviesState extends State<Movies> {
   }
 }
 
-class FavoriteWidget extends StatefulWidget {
 
-  final bool isFavorited;
-  final VoidCallback onFavoritePressed;
-
-  const FavoriteWidget({this.isFavorited,this.onFavoritePressed});
-
-  @override
-  _FavoriteWidgetState createState() => _FavoriteWidgetState();
-}
-
-class _FavoriteWidgetState extends State<FavoriteWidget> {
-
- bool _isFavorite = false;
-
-@override
-  void initState() {
-    _isFavorite = widget.isFavorited;
-    super.initState();
-  }
-
-void _toggleFavorite() {
-    widget.onFavoritePressed();
-    setState(() {
-      // If the lake is currently favorited, unfavorite it.
-      _isFavorite = !_isFavorite;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 20.0,
-      height: 20.0,
-      child: IgnorePointer(
-        ignoring: _isFavorite ? true : false,
-              child: IconButton(
-          iconSize: 20.0,
-          padding: EdgeInsets.zero,
-          onPressed: _toggleFavorite,
-          icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border, color: Colors.grey),
-        ),
-      ),
-    );
-  }
-}
