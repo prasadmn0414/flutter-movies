@@ -9,9 +9,12 @@ class FavoriteWidget extends StatefulWidget {
   final bool isFavorited;
   final VoidCallback onFavoritePressed;
   final int movieid;
+  final double iconSize;
+  final Color iconColor;
+  final bool allowToggle;
 
   const FavoriteWidget(
-      {this.isFavorited, this.onFavoritePressed, this.movieid});
+      {this.isFavorited, this.onFavoritePressed, this.movieid,this.iconSize = 20.0, this.iconColor = Colors.grey,this.allowToggle=false});
 
   @override
   _FavoriteWidgetState createState() => _FavoriteWidgetState();
@@ -64,13 +67,13 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
       width: 20.0,
       height: 20.0,
       child: IgnorePointer(
-        ignoring: _isFavorite ? true : false,
+        ignoring: widget.allowToggle ? false :(_isFavorite ? true : false),
         child: IconButton(
-          iconSize: 20.0,
+          iconSize: widget.iconSize,
           padding: EdgeInsets.zero,
           onPressed: _toggleFavorite,
           icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: Colors.grey),
+              color: widget.iconColor),
         ),
       ),
     );

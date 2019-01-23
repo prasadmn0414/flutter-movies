@@ -143,9 +143,6 @@ class _MoviesState extends State<Movies> {
                             movieid: movie.id,
                             isFavorited: false,
                             onFavoritePressed: () {
-                              debugPrint("Fav tapped ${movie.title}");
-                              //String res = jsonEncode(movie.toJson());
-                              // debugPrint(res);
 
                               // Write the string to file for saving favourites
                               readFile(favFile).then((String filedata) {

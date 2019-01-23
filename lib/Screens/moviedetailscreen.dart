@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app/Constants.dart';
 import 'package:flutter_movie_app/Network/moviedetail.dart';
+import 'package:flutter_movie_app/Network/movies_list.dart';
+import 'package:flutter_movie_app/Utils/Favorite.dart';
+import 'package:flutter_movie_app/Utils/Storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,8 +23,7 @@ var screenWidth = 0.0;
 var screenHeight = 0.0;
 
 class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
-
-  double offset = 0.0 ;
+  double offset = 0.0;
 
   ScrollController _scrollController;
   MovieDetails movieDetails;
@@ -30,9 +32,10 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
 
   @override
   void initState() {
-    _scrollController = ScrollController()..addListener(() => setState(() {
-      offset = _scrollController.offset;
-    }));
+    _scrollController = ScrollController()
+      ..addListener(() => setState(() {
+            offset = _scrollController.offset;
+          }));
     _getMovieDetails = getMovieDetails();
     super.initState();
   }
@@ -162,6 +165,18 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                         width: screenWidth,
                         height: kExpandedHeight * 0.66,
                         color: Colors.black.withOpacity(0.2),
+                      ),
+                    ),
+                    Positioned(
+                      top: 40.0,
+                      right: 20.0,
+                      child: FavoriteWidget(
+                        allowToggle: true,
+                        movieid: widget.movieid,
+                        isFavorited: false,
+                        iconSize: 30.0,
+                        iconColor: Colors.white,
+                        onFavoritePressed: () {},
                       ),
                     ),
                     Positioned(
