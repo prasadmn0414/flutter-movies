@@ -5,16 +5,23 @@ import 'package:flutter_movie_app/Constants.dart';
 import 'package:flutter_movie_app/Utils/Storage.dart';
 import 'package:flutter_movie_app/Network/movies_list.dart';
 
+typedef onFavoritePressed = void Function(bool isFavourite);
+
 class FavoriteWidget extends StatefulWidget {
   final bool isFavorited;
-  final VoidCallback onFavoritePressed;
+  final onFavoritePressed;
   final int movieid;
   final double iconSize;
   final Color iconColor;
   final bool allowToggle;
 
   const FavoriteWidget(
-      {this.isFavorited, this.onFavoritePressed, this.movieid,this.iconSize = 20.0, this.iconColor = Colors.grey,this.allowToggle=false});
+      {this.isFavorited,
+      this.onFavoritePressed,
+      this.movieid,
+      this.iconSize = 20.0,
+      this.iconColor = Colors.grey,
+      this.allowToggle = false});
 
   @override
   _FavoriteWidgetState createState() => _FavoriteWidgetState();
@@ -49,25 +56,26 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
   @override
   void initState() {
     _isFavorite = widget.isFavorited;
-    isFavoriteMovie();
+    // isFavoriteMovie();
     super.initState();
   }
 
   void _toggleFavorite() {
-    widget.onFavoritePressed();
+    widget.onFavoritePressed(!_isFavorite);
     setState(() {
-      // If the lake is currently favorited, unfavorite it.
       _isFavorite = !_isFavorite;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    isFavoriteMovie();
+
     return Container(
       width: 20.0,
       height: 20.0,
       child: IgnorePointer(
-        ignoring: widget.allowToggle ? false :(_isFavorite ? true : false),
+        ignoring: widget.allowToggle ? false : (_isFavorite ? true : false),
         child: IconButton(
           iconSize: widget.iconSize,
           padding: EdgeInsets.zero,

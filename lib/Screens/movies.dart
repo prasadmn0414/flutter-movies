@@ -54,7 +54,7 @@ class _MoviesState extends State<Movies> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => MovieDetailScreen(movie.id)));
+                builder: (context) => MovieDetailScreen(movie)));
       },
       child: Card(
         child: Container(
@@ -142,7 +142,7 @@ class _MoviesState extends State<Movies> {
                           FavoriteWidget(
                             movieid: movie.id,
                             isFavorited: false,
-                            onFavoritePressed: () {
+                            onFavoritePressed: (isFavourite) {
 
                               // Write the string to file for saving favourites
                               readFile(favFile).then((String filedata) {
