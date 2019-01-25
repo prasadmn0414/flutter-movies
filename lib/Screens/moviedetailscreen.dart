@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_app/Constants.dart';
 import 'package:flutter_movie_app/Network/moviedetail.dart';
-import 'package:flutter_movie_app/Network/movies_list.dart';
 import 'package:flutter_movie_app/Utils/Favorite.dart';
 import 'package:flutter_movie_app/Utils/Storage.dart';
 import 'dart:convert';
@@ -13,8 +12,8 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MovieDetailScreen extends StatefulWidget {
-  final Results movie;
-  MovieDetailScreen(this.movie);
+  final int movieid;
+  MovieDetailScreen(this.movieid);
 
   @override
   _MainCollapsingToolbarState createState() => _MainCollapsingToolbarState();
@@ -63,7 +62,7 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
   }
 
   Future<void> getMovieDetails() async {
-    int movieid = widget.movie.id;
+    int movieid = widget.movieid;
     String url =
         'https://api.themoviedb.org/3/movie/$movieid?api_key=$apikey&append_to_response=videos,credits,similar';
     final movieDetailResponse = await http.get(url);
@@ -174,26 +173,25 @@ class _MainCollapsingToolbarState extends State<MovieDetailScreen> {
                       right: 20.0,
                       child: FavoriteWidget(
                         allowToggle: true,
-                        movieid: widget.movie.id,
+                        movieid: widget.movieid,
                         isFavorited: false,
                         iconSize: 30.0,
                         iconColor: Colors.white,
                         onFavoritePressed: (isFavourite) {
                           readFile(favFile).then((String filedata) {
-                                List<Results> favMovies = [];
+                                List<int> favMovies = [];
                                 if (filedata.length > 0) {
                                   jsonDecode(filedata).forEach((map) {
-                                    Results obj = Results.fromJson(map);
-                                    if (obj.id != widget.movie.id) {
-                                      favMovies.add(obj);
+                                    if (map != widget.movieid) {
+                                      favMovies.add(map);
                                     }
                                   });
                                 }
 
                                 if(isFavourite) {
-                                    favMovies.add(widget.movie);
+                                    favMovies.add(widget.movieid);
                                 } else {
-                                    int index = favMovies.indexWhere((obj) => obj.id == widget.movie.id);
+                                    int index = favMovies.indexWhere((obj) => obj == widget.movieid);
                                     if (index != -1) {
                                       favMovies.removeAt(index);
                                     }

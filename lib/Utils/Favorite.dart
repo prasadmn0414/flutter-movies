@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter_movie_app/Constants.dart';
 import 'package:flutter_movie_app/Utils/Storage.dart';
-import 'package:flutter_movie_app/Network/movies_list.dart';
+
 
 typedef onFavoritePressed = void Function(bool isFavourite);
 
@@ -34,13 +34,13 @@ class _FavoriteWidgetState extends State<FavoriteWidget> {
     bool isFav = false;
 
     readFile(favFile).then((String filedata) {
-      List<Results> favMovies = [];
+      List<int> favMovies = [];
       if (filedata.length > 0) {
         jsonDecode(filedata)
-            .forEach((map) => favMovies.add(Results.fromJson(map)));
+            .forEach((map) => favMovies.add(map));
       }
 
-      if (favMovies.indexWhere((obj) => obj.id == widget.movieid) == -1) {
+      if (favMovies.indexWhere((obj) => obj == widget.movieid) == -1) {
         // -1 means not found
         isFav = false;
       } else {

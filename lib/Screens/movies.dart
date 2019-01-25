@@ -54,7 +54,7 @@ class _MoviesState extends State<Movies> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => MovieDetailScreen(movie)));
+                builder: (context) => MovieDetailScreen(movie.id)));
       },
       child: Card(
         child: Container(
@@ -146,16 +146,15 @@ class _MoviesState extends State<Movies> {
 
                               // Write the string to file for saving favourites
                               readFile(favFile).then((String filedata) {
-                                List<Results> favMovies = [];
+                                List<int> favMovies = [];
                                 if (filedata.length > 0) {
                                   jsonDecode(filedata).forEach((map) {
-                                    Results obj = Results.fromJson(map);
-                                    if (obj.id != movie.id) {
-                                      favMovies.add(obj);
+                                    if (map != movie.id) {
+                                      favMovies.add(map);
                                     }
                                   });
                                 }
-                                favMovies.add(movie);
+                                favMovies.add(movie.id);
                                 String res = jsonEncode(favMovies);
                                 cleanFile(favFile).then((File file) {
                                   writeFile(res, favFile);
